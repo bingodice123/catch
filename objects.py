@@ -17,6 +17,7 @@ class Game:
 
         self.update_gravity()
         self.schedule_cloning()
+        self.check_collisions()
         self.root.bind('<Left>', self.move_player_left)
         self.root.bind('<Right>', self.move_player_right)
         self.root.mainloop()
@@ -31,16 +32,21 @@ class Game:
     def clone_image(self):
         x = random.randint(0, 500)
         y = 0
-        new_image = self.canvas.create_image(x, y, image=self.image1)
-        self.images.append(new_image)
+        self.new_image = self.canvas.create_image(x, y, image=self.image1)
+        self.images.append(self.new_image)
         self.speeds.append(0)
 
     def schedule_cloning(self):
         self.clone_image()
-        self.root.after(1400, self.schedule_cloning)  # Schedule the next cloning in 2 seconds
+        self.root.after(2000, self.schedule_cloning)  # Schedule the next cloning in 2 seconds
 
     def move_player_left(self, event):
         self.canvas.move(self.player_image, -20, 0)
 
     def move_player_right(self, event):
         self.canvas.move(self.player_image, 20, 0)
+
+    def check_collisions(self):
+        hi = list(self.canvas.bbox(self.player_image))
+        hi2 = self.canvas.find_overlapping(hi[0], hi[1], hi[2], hi[3])
+        print(hi2)
