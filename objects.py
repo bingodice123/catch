@@ -15,6 +15,8 @@ class Game:
         self.images = []
         self.speeds = []
 
+        self.score = 0
+
         self.update_gravity()
         self.schedule_cloning()
         self.check_collisions()
@@ -47,6 +49,16 @@ class Game:
         self.canvas.move(self.player_image, 20, 0)
 
     def check_collisions(self):
-        hi = list(self.canvas.bbox(self.player_image))
-        hi2 = self.canvas.find_overlapping(hi[0], hi[1], hi[2], hi[3])
-        print(hi2)
+        xCheck = False
+        yCheck = False
+        collision = False
+        playerBbox = list(self.canvas.bbox(self.player_image))
+        enemyBbox = list(self.canvas.bbox(self.new_image))
+        if enemyBbox[2] >= playerBbox[0] >= enemyBbox[2] + 50:
+            xCheck = True
+        if enemyBbox[3] >= playerBbox[1] >= enemyBbox[3] + 50:
+            yCheck = True
+        if xCheck == True and yCheck == True:
+            collision = True
+            self.score += 1
+        self.root.after(1, self.check_collisions())
