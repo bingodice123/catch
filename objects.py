@@ -61,4 +61,4 @@ class Game:
         if xCheck == True and yCheck == True:
             collision = True
             self.score += 1
-        self.root.after(1, self.check_collisions())
+        self.root.after(1, self.check_collisions)
