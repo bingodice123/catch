@@ -5,7 +5,7 @@ import random
 class Game:
     def __init__(self):
         self.root = Tk()
-        self.root.geometry('500x500')
+        self.root.geometry('500x600')
 
         self.image1 = PhotoImage(file='image.png')
 
@@ -14,6 +14,8 @@ class Game:
         self.player_image = self.canvas.create_image(250,450,image=self.image1)
         self.images = []
         self.speeds = []
+        self.score_label = Label(self.root, text=0, font=("Sans Serif", 40))
+        self.score_label.place(x=250,y=520)
 
         self.score = 0
 
@@ -49,16 +51,23 @@ class Game:
         self.canvas.move(self.player_image, 20, 0)
 
     def check_collisions(self):
-        xCheck = False
-        yCheck = False
         collision = False
         playerBbox = list(self.canvas.bbox(self.player_image))
-        enemyBbox = list(self.canvas.bbox(self.new_image))
-        if enemyBbox[2] >= playerBbox[0] >= enemyBbox[2] + 50:
-            xCheck = True
-        if enemyBbox[3] >= playerBbox[1] >= enemyBbox[3] + 50:
-            yCheck = True
-        if xCheck == True and yCheck == True:
-            collision = True
-            self.score += 1
+
+        if self.new_image is not None:
+            enemyBbox = self.canvas.bbox(self.new_image)
+
+            if enemyBbox:  # Check that bbox is not None and is a valid list
+                x_overlap = (playerBbox[2] >= enemyBbox[0] and playerBbox[0] <= enemyBbox[2])
+                y_overlap = (playerBbox[3] >= enemyBbox[1] and playerBbox[1] <= enemyBbox[3])
+
+                if x_overlap and y_overlap:
+                    collision = True
+                    self.score += 1
+                    self.score_label.config(text=self.score)
+
+                    # Remove the enemy object from the canvas
+                    self.canvas.delete(self.new_image)
+                    self.new_image = None
+
         self.root.after(1, self.check_collisions)
